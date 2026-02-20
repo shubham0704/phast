@@ -1,0 +1,297 @@
+/* ══════════════════════════════════════════════════════════════
+   PHAST Project Page — Custom styles on top of Bulma
+   Following Nerfies template conventions
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Base ─────────────────────────────────────────────────── */
+body {
+  font-family: 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Hero / Title ─────────────────────────────────────────── */
+.publication-title {
+  font-family: 'Noto Serif', Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 1.25;
+}
+
+.publication-authors {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.publication-authors a {
+  color: #363636;
+  border-bottom: 1px dashed #888;
+}
+
+.publication-authors a:hover {
+  color: #3273dc;
+  border-bottom-color: #3273dc;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-venue {
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.publication-links {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.link-block .button {
+  font-weight: 600;
+}
+
+/* ── Teaser ───────────────────────────────────────────────── */
+.hero.teaser {
+  padding-top: 0;
+}
+
+.teaser-card {
+  background: #0d1117;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+}
+
+.teaser-gif {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+.teaser-caption {
+  font-size: 0.95rem !important;
+  line-height: 1.6;
+  margin-top: 1.25rem;
+  color: #666;
+}
+
+/* Color spans matching GIF palette */
+.color-known  { color: #58a6ff; font-weight: 600; }
+.color-partial { color: #3fb950; font-weight: 600; }
+.color-gru    { color: #f85149; font-weight: 600; }
+.color-s5     { color: #d29922; font-weight: 600; }
+.color-linoss { color: #c678dd; font-weight: 600; }
+
+/* ── TL;DR box ────────────────────────────────────────────── */
+.tldr-box {
+  background: #f0f6ff;
+  border-left: 4px solid #3273dc;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #363636;
+}
+
+/* ── Regime cards ─────────────────────────────────────────── */
+.regime-columns {
+  margin-top: 1.5rem;
+}
+
+.regime-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 1.5rem;
+  height: 100%;
+  transition: box-shadow 0.2s;
+}
+
+.regime-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.regime-known  { border-top: 3px solid #48c774; }
+.regime-partial { border-top: 3px solid #ffdd57; }
+.regime-unknown { border-top: 3px solid #f14668; }
+
+.regime-header {
+  margin-bottom: 1rem;
+}
+
+.regime-body p {
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.regime-footer {
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.regime-example {
+  font-size: 0.82rem;
+  color: #888;
+  margin-top: 0.5rem;
+}
+
+.shared-template-box {
+  margin-top: 2rem;
+  padding: 1rem 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.shared-template-box p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0;
+}
+
+/* ── System gallery ───────────────────────────────────────── */
+.system-card {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  height: 100%;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.system-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.system-icon {
+  font-size: 2rem;
+  color: #3273dc;
+  margin-bottom: 0.75rem;
+}
+
+.system-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #363636;
+}
+
+.system-tags {
+  margin-bottom: 0.5rem;
+}
+
+.system-tags .tag {
+  font-size: 0.7rem;
+}
+
+.system-desc {
+  font-size: 0.82rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ── Results table ────────────────────────────────────────── */
+.results-table {
+  font-size: 0.9rem;
+}
+
+.results-table thead th {
+  background: #363636;
+  color: white;
+  font-weight: 600;
+  border-color: #363636;
+}
+
+.results-table .section-header td {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 2px solid #ddd;
+}
+
+.results-table .tag {
+  vertical-align: middle;
+  font-size: 0.65rem;
+  margin-left: 0.25rem;
+}
+
+/* ── BibTeX ───────────────────────────────────────────────── */
+.bibtex-wrapper {
+  position: relative;
+  background: #1b1f23;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.bibtex-wrapper pre {
+  background: transparent;
+  color: #c9d1d9;
+  padding: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.bibtex-wrapper code {
+  background: transparent;
+  color: #c9d1d9;
+  font-size: 0.85rem;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.copy-btn.is-copied {
+  background-color: #48c774 !important;
+  border-color: #48c774 !important;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+  padding: 2rem 1.5rem;
+}
+
+.footer p {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.footer a {
+  color: #666;
+}
+
+.footer a:hover {
+  color: #3273dc;
+}
+
+/* ── Responsive adjustments ───────────────────────────────── */
+@media screen and (max-width: 768px) {
+  .publication-title {
+    font-size: 1.8rem;
+  }
+
+  .publication-links {
+    gap: 0.3rem;
+  }
+
+  .link-block .button {
+    font-size: 0.85rem;
+  }
+
+  .regime-columns .column {
+    margin-bottom: 1rem;
+  }
+
+  .results-table {
+    font-size: 0.78rem;
+  }
+
+  .teaser-caption {
+    font-size: 0.82rem !important;
+  }
+}

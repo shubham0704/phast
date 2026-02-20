@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHAST: Port-Hamiltonian Architecture for Structured Temporal Dynamics</title>
+  <meta name="description" content="PHAST unifies three knowledge regimes under one port-Hamiltonian template for learning dissipative dynamics across mechanical, electrical, molecular, thermal, gravitational, and ecological systems.">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="PHAST: Port-Hamiltonian Architecture for Structured Temporal Dynamics">
+  <meta property="og:description" content="Physics-informed neural architecture for dissipative dynamics across 6 physical domains. ICML 2026.">
+  <meta property="og:type" content="website">
+
+  <!-- Bulma CSS (same as Nerfies) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+  <!-- Icons: Font Awesome + Academicons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <!-- Fonts: Noto Sans + Noto Serif for academic feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <!-- MathJax for inline math -->
+  <script>
+    MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     HERO: Title, authors, venue, links
+     ════════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+
+          <h1 class="title is-1 publication-title">
+            PHAST: Port-Hamiltonian Architecture for<br>Structured Temporal Dynamics Forecasting
+          </h1>
+
+          <!-- Authors -->
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://shubhambhardwaj.com" target="_blank">Shubham Bhardwaj</a><sup>1,2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.cs.utexas.edu/~bajaj/" target="_blank">Chandrajit Bajaj</a><sup>1</sup>
+            </span>
+          </div>
+
+          <!-- Affiliations -->
+          <div class="is-size-6 publication-authors">
+            <span class="author-block"><sup>1</sup>Department of Computer Science &amp; Oden Institute, The University of Texas at Austin</span>
+            <br>
+            <span class="author-block"><sup>2</sup><a href="https://mihawk.ai" target="_blank">Mihawk.ai</a></span>
+          </div>
+
+          <!-- Venue badge -->
+          <div class="publication-venue">
+            <span class="tag is-medium is-info is-light">arXiv 2026</span>
+          </div>
+
+          <!-- Resource buttons -->
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="#" class="button is-dark is-rounded">
+                <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                <span>Paper</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" class="button is-dark is-rounded">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" class="button is-dark is-rounded">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#BibTeX" class="button is-dark is-rounded">
+                <span class="icon"><i class="fas fa-quote-left"></i></span>
+                <span>BibTeX</span>
+              </a>
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     TEASER: Main animated result
+     ════════════════════════════════════════════════════════════ -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div class="teaser-card">
+        <img src="assets/gifs/phast_monolithic_demo.gif"
+             alt="PHAST vs baselines: animated rollouts across 8 physical systems"
+             class="teaser-gif"
+             loading="eager">
+      </div>
+      <h2 class="subtitle has-text-centered teaser-caption">
+        <strong>100-step open-loop rollouts across 8 physical systems.</strong>
+        <span class="color-known">Blue</span> = PHAST (Known),
+        <span class="color-partial">Green</span> = PHAST (Partial),
+        <span class="color-gru">Red</span> = GRU,
+        <span class="color-s5">Gold</span> = S5,
+        <span class="color-linoss">Purple</span> = LinOSS,
+        White = ground truth.
+        PHAST tracks ground truth where baselines diverge.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     TL;DR
+     ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div class="tldr-box">
+          <strong>TL;DR:</strong> We embed the port-Hamiltonian energy structure
+          $\dot{x}=(J{-}R)\nabla H(x)$ into a neural architecture that decomposes
+          dynamics into potential $V(q)$, mass $M(q)$, and damping $D(q)$.
+          Across 13 benchmarks spanning 6 physical domains, this structure alone
+          yields the best long-horizon stability&mdash;outperforming S5, GRU, Transformers,
+          and other baselines by up to 10<sup>5</sup>&times;.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     ABSTRACT
+     ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Real physical systems are dissipative&mdash;a pendulum slows, a circuit loses charge to heat&mdash;and
+            forecasting their dynamics from partial observations is a central challenge in scientific machine learning.
+            We address the <em>position-only</em> (q-only) problem: given only generalized positions $q_t$ at
+            discrete times (momenta $p_t$ latent), learn a structured model that (a) produces stable long-horizon
+            forecasts and (b) recovers physically meaningful parameters when sufficient structure is provided.
+          </p>
+          <p>
+            The port-Hamiltonian framework makes the conservative&ndash;dissipative split explicit via
+            $\dot{x} = (J - R)\nabla H(x)$, guaranteeing $dH/dt \le 0$ when $R \succeq 0$.
+            We introduce <strong>PHAST</strong> (Port-Hamiltonian Architecture for Structured Temporal dynamics),
+            which decomposes the Hamiltonian into potential $V(q)$, mass $M(q)$, and damping $D(q)$ across
+            three knowledge regimes (KNOWN, PARTIAL, UNKNOWN), uses efficient low-rank PSD/SPD
+            parameterizations, and advances dynamics with Strang splitting.
+          </p>
+          <p>
+            Across thirteen q-only benchmarks spanning mechanical, electrical, molecular, thermal,
+            gravitational, and ecological systems, PHAST achieves the best long-horizon forecasting
+            among competitive baselines and enables physically meaningful parameter recovery when
+            the regime provides sufficient anchors. We show that identification is fundamentally
+            ill-posed without such anchors (gauge freedom), motivating a two-axis evaluation that
+            separates forecasting stability from identifiability.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     METHOD: Knowledge Regimes
+     ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Three Knowledge Regimes, One Template</h2>
+        <div class="content has-text-centered">
+          <p>
+            PHAST unifies three levels of prior knowledge under a single port-Hamiltonian template.
+            The architecture is identical across regimes&mdash;only the component instantiations change.
+          </p>
+        </div>
+
+        <div class="columns is-centered regime-columns">
+          <div class="column is-one-third">
+            <div class="regime-card regime-known">
+              <div class="regime-header">
+                <span class="tag is-success is-medium">KNOWN</span>
+              </div>
+              <div class="regime-body">
+                <p><strong>$V(q)$:</strong> given from physics</p>
+                <p><strong>$M(q)$:</strong> given from physics</p>
+                <p><strong>$D(q)$:</strong> <em>learned</em> (PSD)</p>
+              </div>
+              <div class="regime-footer">
+                <span class="tag is-light">Identifiable</span>
+              </div>
+              <p class="regime-example">
+                <em>E.g., pendulum, RLC circuit, Lennard-Jones, heat exchange</em>
+              </p>
+            </div>
+          </div>
+
+          <div class="column is-one-third">
+            <div class="regime-card regime-partial">
+              <div class="regime-header">
+                <span class="tag is-warning is-medium">PARTIAL</span>
+              </div>
+              <div class="regime-body">
+                <p><strong>$V(q)$:</strong> template + learned $\tilde{V}$</p>
+                <p><strong>$M(q)$:</strong> given</p>
+                <p><strong>$D(q)$:</strong> <em>learned</em> (bounded)</p>
+              </div>
+              <div class="regime-footer">
+                <span class="tag is-light">Partially identifiable</span>
+              </div>
+              <p class="regime-example">
+                <em>E.g., double pendulum, N-body gravity, cart-pole</em>
+              </p>
+            </div>
+          </div>
+
+          <div class="column is-one-third">
+            <div class="regime-card regime-unknown">
+              <div class="regime-header">
+                <span class="tag is-danger is-medium">UNKNOWN</span>
+              </div>
+              <div class="regime-body">
+                <p><strong>$V(q)$:</strong> neural network</p>
+                <p><strong>$M(q)$:</strong> neural SPD net</p>
+                <p><strong>$D(q)$:</strong> neural PSD net</p>
+              </div>
+              <div class="regime-footer">
+                <span class="tag is-light">Not identifiable</span>
+              </div>
+              <p class="regime-example">
+                <em>E.g., predator-prey, black-box dynamics</em>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content has-text-centered shared-template-box">
+          <p>
+            <strong>Shared across all regimes:</strong> port-Hamiltonian state $x=(q,p)$ with conservative&ndash;dissipative split &bull;
+            passivity guarantee $dH/dt \le 0$ by construction &bull;
+            Strang-split symplectic integration &bull;
+            causal velocity observer for q-only input
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     KEY INSIGHT: Two-axis evaluation
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" style="background: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Key Insight: Forecasting &ne; Identifiability</h2>
+
+        <div class="columns is-vcentered">
+          <div class="column is-half">
+            <figure class="image" style="margin-bottom: 1.25rem;">
+              <img src="assets/figures/system_schematics.png"
+                   alt="Windy Pendulum, Double Pendulum, and Cart-Pole system schematics with damping equations"
+                   loading="lazy"
+                   style="border-radius: 8px;">
+            </figure>
+            <div class="content">
+              <p>
+                These three systems form a progression of structural complexity:
+                <strong>Windy Pendulum</strong> (1-DOF, scalar damping $d(\theta)$),
+                <strong>Double Pendulum</strong> (2-DOF chain with configuration-dependent mass $M(q)$), and
+                <strong>Cart-Pole</strong> (mixed topology $\mathbb{R} \times S^1$, per-DOF damping with two distinct
+                mechanisms: constant cart friction $d_c$ and position-dependent angular wind damping $d(\theta)$).
+              </p>
+              <p>
+                A model that forecasts well need not recover the true physics&mdash;damping $D(q)$ can act as
+                a &ldquo;stabilizer&rdquo; absorbing errors in $V$ or $M$, making the inverse problem
+                <strong>non-identifiable</strong> without sufficient structure.
+                PHAST exposes this via two evaluation axes:
+              </p>
+              <ul>
+                <li><strong>Forecasting</strong> &mdash; rollout MSE at $H{=}100$: PHAST (PARTIAL) achieves the best forecasting across all three systems</li>
+                <li><strong>Identifiability</strong> &mdash; damping $R^2_D$ vs. ground truth: PHAST (KNOWN) achieves near-perfect recovery ($R^2_D \approx 1$) on Pendulum and Double Pendulum</li>
+              </ul>
+              <p>
+                Baselines (S5, LinOSS, VPT) do not expose explicit damping fields&mdash;they can forecast,
+                but cannot tell you <em>why</em> the system dissipates.
+              </p>
+            </div>
+          </div>
+          <div class="column is-half">
+            <figure class="image" style="margin-bottom: 1rem;">
+              <img src="assets/figures/gallery_rollouts_phase.png"
+                   alt="Rollout trajectories and phase portraits across mechanical systems"
+                   loading="lazy"
+                   style="border-radius: 8px;">
+              <figcaption class="has-text-centered" style="font-size: 0.8rem; color: #888; margin-top: 0.5rem;">
+                Rollouts &amp; phase portraits: PHAST tracks ground truth in state and phase space.
+              </figcaption>
+            </figure>
+            <figure class="image">
+              <img src="assets/figures/gallery_damping_energy.png"
+                   alt="Damping recovery and energy trajectories across three mechanical systems"
+                   loading="lazy"
+                   style="border-radius: 8px;">
+              <figcaption class="has-text-centered" style="font-size: 0.8rem; color: #888; margin-top: 0.5rem;">
+                Damping recovery &amp; energy passivity: KNOWN regime recovers true $D(q)$.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     SYSTEM GALLERY
+     ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Benchmark Systems</h2>
+    <p class="has-text-centered subtitle is-6" style="margin-bottom: 2rem;">
+      Evaluated across 13 benchmarks spanning 6 physical domains. The 8 systems below appear in the animated comparison above.
+    </p>
+
+    <div class="columns is-multiline system-gallery">
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-wind"></i></div>
+          <h4 class="system-name">Windy Pendulum</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">1-DOF</span>
+            <span class="tag is-success is-light is-small">KNOWN</span>
+          </div>
+          <p class="system-desc">Simple pendulum with position-dependent air drag. Known $V(\theta)$ and $M$; only damping is learned.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-link"></i></div>
+          <h4 class="system-name">Double Pendulum</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">2-DOF</span>
+            <span class="tag is-warning is-light is-small">PARTIAL</span>
+          </div>
+          <p class="system-desc">Two-link chain with chaotic dynamics. Sensitive dependence on initial conditions; wind forcing.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-cart-flatbed"></i></div>
+          <h4 class="system-name">Cart-Pole</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">2-DOF</span>
+            <span class="tag is-success is-light is-small">KNOWN</span>
+          </div>
+          <p class="system-desc">Cart on a rail with inverted pendulum. Mixed topology $\mathbb{R} \times S^1$ with wind.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-bolt"></i></div>
+          <h4 class="system-name">RLC Circuit</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">1-DOF</span>
+            <span class="tag is-success is-light is-small">KNOWN</span>
+          </div>
+          <p class="system-desc">Series RLC circuit: charge = position, flux = momentum, resistance = dissipation.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-atom"></i></div>
+          <h4 class="system-name">LJ-3 Particles</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">6-DOF</span>
+            <span class="tag is-success is-light is-small">KNOWN</span>
+          </div>
+          <p class="system-desc">Three particles via Lennard-Jones potential in 2D with Langevin friction.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-temperature-half"></i></div>
+          <h4 class="system-name">Heat Exchange</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">2-DOF</span>
+            <span class="tag is-success is-light is-small">KNOWN</span>
+          </div>
+          <p class="system-desc">Two coupled thermal masses. Temperature as generalized position with thermal momentum analog.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-meteor"></i></div>
+          <h4 class="system-name">N-body Gravity</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">6-DOF</span>
+            <span class="tag is-warning is-light is-small">PARTIAL</span>
+          </div>
+          <p class="system-desc">Three gravitational bodies in 2D. Masses learned from trajectory data.</p>
+        </div>
+      </div>
+
+      <div class="column is-one-quarter-desktop is-half-tablet">
+        <div class="system-card">
+          <div class="system-icon"><i class="fas fa-paw"></i></div>
+          <h4 class="system-name">Predator-Prey</h4>
+          <div class="system-tags">
+            <span class="tag is-info is-light is-small">1-DOF</span>
+            <span class="tag is-danger is-light is-small">UNKNOWN</span>
+          </div>
+          <p class="system-desc">Lotka-Volterra with carrying capacity. Non-canonical Poisson structure; all components learned.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     RESULTS TABLE
+     ════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Results</h2>
+    <p class="has-text-centered subtitle is-6" style="margin-bottom: 2rem;">
+      Suite summary across thirteen q-only benchmarks. Best PHAST regime vs. best baseline (mean &pm; std over 5 seeds).
+    </p>
+
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth results-table">
+        <thead>
+          <tr>
+            <th>Benchmark</th>
+            <th>Best PHAST</th>
+            <th>Best Baseline</th>
+            <th>Gain</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="4"><em>Mechanical systems (rollout MSE at H=100)</em></td></tr>
+          <tr>
+            <td>Pendulum (conservative)</td>
+            <td><strong class="has-text-link">0.680 &pm; 0.043</strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>2.320 &pm; 0.224 (Transformer)</td>
+            <td><strong>3.4&times;</strong></td>
+          </tr>
+          <tr>
+            <td>Pendulum (damped)</td>
+            <td><strong class="has-text-link">0.017 &pm; 0.005</strong> <span class="tag is-success is-light is-small">KNOWN</span></td>
+            <td>0.450 &pm; 0.241 (D-LinOSS)</td>
+            <td><strong>26.5&times;</strong></td>
+          </tr>
+          <tr>
+            <td>Pendulum (windy)</td>
+            <td><strong class="has-text-link">0.092 &pm; 0.014</strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>0.435 &pm; 0.239 (D-LinOSS)</td>
+            <td><strong>4.7&times;</strong></td>
+          </tr>
+          <tr>
+            <td>Cart-Pole (windy)</td>
+            <td><strong class="has-text-link">0.063 &pm; 0.019</strong> <span class="tag is-success is-light is-small">KNOWN</span></td>
+            <td>0.431 &pm; 0.077 (S5)</td>
+            <td><strong>6.8&times;</strong></td>
+          </tr>
+          <tr>
+            <td>Oscillator (conservative)</td>
+            <td><strong class="has-text-link">0.0010 &pm; 0.0002</strong> <span class="tag is-success is-light is-small">KNOWN</span></td>
+            <td>1.087 &pm; 0.299 (Transformer)</td>
+            <td><strong>1.1&times;10<sup>3</sup></strong></td>
+          </tr>
+          <tr>
+            <td>Oscillator (damped)</td>
+            <td><strong class="has-text-link">0.0011 &pm; 0.0003</strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>0.926 &pm; 0.254 (Transformer)</td>
+            <td><strong>8.4&times;10<sup>2</sup></strong></td>
+          </tr>
+          <tr>
+            <td>Double pendulum (conservative)</td>
+            <td><strong class="has-text-link">0.402 &pm; 0.047</strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>0.618 &pm; 0.028 (S5)</td>
+            <td><strong>1.5&times;</strong></td>
+          </tr>
+          <tr>
+            <td>Double pendulum (damped)</td>
+            <td><strong class="has-text-link">0.320 &pm; 0.032</strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>0.630 &pm; 0.031 (S5)</td>
+            <td><strong>2.0&times;</strong></td>
+          </tr>
+
+          <tr class="section-header"><td colspan="4"><em>Non-mechanical systems (next-step MSE)</em></td></tr>
+          <tr>
+            <td>RLC circuit</td>
+            <td><strong class="has-text-link">2.63&times;10<sup>&minus;5</sup></strong> <span class="tag is-danger is-light is-small">UNKNOWN</span></td>
+            <td>4.81&times;10<sup>&minus;4</sup> (Transformer)</td>
+            <td><strong>18&times;</strong></td>
+          </tr>
+          <tr>
+            <td>LJ-3 cluster</td>
+            <td><strong class="has-text-link">4.59&times;10<sup>&minus;10</sup></strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>2.05&times;10<sup>&minus;4</sup> (S5)</td>
+            <td><strong>4.5&times;10<sup>5</sup></strong></td>
+          </tr>
+          <tr>
+            <td>Heat exchange</td>
+            <td><strong class="has-text-link">2.42&times;10<sup>&minus;6</sup></strong> <span class="tag is-success is-light is-small">KNOWN</span></td>
+            <td>4.46&times;10<sup>&minus;4</sup> (LinOSS)</td>
+            <td><strong>1.8&times;10<sup>2</sup></strong></td>
+          </tr>
+          <tr>
+            <td>N-body gravity</td>
+            <td><strong class="has-text-link">4.27&times;10<sup>&minus;8</sup></strong> <span class="tag is-warning is-light is-small">PARTIAL</span></td>
+            <td>1.83&times;10<sup>&minus;3</sup> (Transformer)</td>
+            <td><strong>4.3&times;10<sup>4</sup></strong></td>
+          </tr>
+          <tr>
+            <td>Predator&ndash;prey</td>
+            <td><strong class="has-text-link">0.0199</strong> <span class="tag is-danger is-light is-small">UNKNOWN</span></td>
+            <td>0.179 (Transformer)</td>
+            <td><strong>9.0&times;</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     BIBTEX
+     ════════════════════════════════════════════════════════════ -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3">BibTeX</h2>
+    <div class="bibtex-wrapper">
+      <button class="button is-small is-dark copy-btn" id="copy-bibtex">
+        <span class="icon is-small"><i class="fas fa-copy"></i></span>
+        <span>Copy</span>
+      </button>
+      <pre><code id="bibtex-content">@article{bhardwaj2026phast,
+  title   = {PHAST: Port-Hamiltonian Architecture for Structured
+             Temporal Dynamics Forecasting},
+  author  = {Bhardwaj, Shubham and Bajaj, Chandrajit},
+  journal = {arXiv preprint},
+  year    = {2026},
+  url     = {}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        This website template is borrowed from <a href="https://nerfies.github.io/" target="_blank">Nerfies</a>
+        and licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
